@@ -227,6 +227,7 @@ def main():
     plotGcVsLength(df, scatterPlot)
     plotPairPlot(df, pairPlot)
 
+   # Generate PDF save analysis file
     generatePDFReport(stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder)
 
 # Run the program
