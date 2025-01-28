@@ -112,6 +112,43 @@ def calculateBioStats(df):
     
     return stats
 
+
+# Function to plot GC content distribution using Matplotlib
+def plotGcContentDistribution(df, outputPath):
+    plt.figure(figsize=(10, 8))
+    plt.hist(df['GC Content (%)'], bins=15, color='skyblue', edgecolor='black', alpha=0.7)
+    plt.title('GC Content Distribution', fontsize=16)
+    plt.xlabel('GC Content (%)', fontsize=14)
+    plt.ylabel('Frequency', fontsize=14)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig(outputPath)
+    plt.close()
+
+# Function to plot sequence length distribution using Matplotlib
+def plotSequenceLengthDistribution(df, outputPath):
+    plt.figure(figsize=(10, 8))
+    plt.hist(df['Length'], bins=15, color='lightgreen', edgecolor='black', alpha=0.7)
+    plt.title('Sequence Length Distribution', fontsize=16)
+    plt.xlabel('Length (bp)', fontsize=14)
+    plt.ylabel('Frequency', fontsize=14)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig(outputPath)
+    plt.close()
+
+# Function to generate a scatter plot for GC content vs. sequence length
+def plotGcVsLength(df, outputPath):
+    plt.figure(figsize=(10, 8))
+    plt.scatter(df['Length'], df['GC Content (%)'], c='purple', alpha=0.7, edgecolors='black', s=100)
+    plt.title('GC Content vs. Sequence Length', fontsize=16)
+    plt.xlabel('Length (bp)', fontsize=14)
+    plt.ylabel('GC Content (%)', fontsize=14)
+    plt.grid(True, linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig(outputPath)
+    plt.close()
+
 def main():
     
     selectedFile = selectFile()
@@ -130,5 +167,25 @@ def main():
     # Calculate summary statistics
     stats = calculateBioStats(df)
     print(stats)
+
+
+
+# Plot and save graphs to AnalysisResult folder
+    outputFolder = 'AnalysisResult'
+    os.makedirs(outputFolder, exist_ok=True)  # Create folder if it doesn't exist
+
+    # Set file paths for each plot
+    gcPlot = os.path.join(outputFolder, "gc_content_distribution.png")
+    lengthPlot = os.path.join(outputFolder, "sequence_length_distribution.png")
+    scatterPlot = os.path.join(outputFolder, "gc_vs_length.png")
+
+    # Generate and save plots
+    plotGcContentDistribution(df, gcPlot)
+    plotSequenceLengthDistribution(df, lengthPlot)
+    plotGcVsLength(df, scatterPlot)
+
+# Example usage
+# saveAnalysisPlots(df)
+
     
 main()
