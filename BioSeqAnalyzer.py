@@ -72,6 +72,46 @@ def nucleotideComposition(sequence):
         'C (%)': (sequence.count('C') / total) * 100,
     }
 
+# Function to analyze sequences and store results in a Pandas DataFrame
+def analyzeSequences(sequences):
+    results = []
+
+    for seqId, sequence in sequences.items():
+        results.append({
+            'Sequence ID': seqId,
+            'Length': len(sequence),
+            'GC Content (%)': calculateGCContent(sequence),
+            'A (%)': round(nucleotideComposition(sequence)['A (%)'], 2),
+            'T (%)': round(nucleotideComposition(sequence)['T (%)'], 2),
+            'G (%)': round(nucleotideComposition(sequence)['G (%)'], 2),
+            'C (%)': round(nucleotideComposition(sequence)['C (%)'], 2),
+            'Reverse Complement (first 50)': reverseComplement(sequence)[:50],
+            'RNA Transcription (first 50)': transcribeToRNA(sequence)[:50]
+        })
+
+    return pd.DataFrame(results)
+
+# Function to calculate basic statistics using numpy
+def calculateStats(data):
+    return {
+        'Mean': np.mean(data),
+        'Median': np.median(data),
+        'Variance': np.var(data),
+        'Standard Deviation': np.std(data)
+    }
+
+# Function to calculate GC  Content and Length Stats
+def calculateBioStats(df):
+    gcContent = df['GC Content (%)'].to_numpy()
+    lengths = df['Length'].to_numpy()
+
+    stats = {
+        'GC Content': calculateStats(gcContent),
+        'Lengths': calculateStats(lengths)
+    }
+    
+    return stats
+
 def main():
     
     selectedFile = selectFile()
@@ -82,6 +122,13 @@ def main():
         print("No sequences found in the FASTA file.")
         return
 
-    print(sequences)
+    # print(sequences)
+    
+    # Analyze sequences and store the results in a DataFrame
+    df = analyzeSequences(sequences)
 
+    # Calculate summary statistics
+    stats = calculateBioStats(df)
+    print(stats)
+    
 main()
