@@ -1,4 +1,4 @@
-# BioSeqAnalyzer: Sequence Analysis and Visualization with Python
+# BioSeqAnalyzer: Biological Sequence Analysis and Visualization with Python
 
 import os
 import numpy as np
@@ -47,6 +47,30 @@ def getSequences(file_path):
     for record in SeqIO.parse(file_path, "fasta"):
         sequences[record.id] = str(record.seq)
     return sequences
+
+# Function to calculate GC content using BioPython
+def calculateGCContent(sequence):
+    return gc_fraction(sequence) * 100
+
+# Function to get the reverse complement of a DNA sequence using BioPython
+def reverseComplement(sequence):
+    seqObj = Seq(sequence)
+    return str(seqObj.reverse_complement())
+
+# Function to transcribe DNA to RNA (T -> U)
+def transcribeToRNA(sequence):
+    seqObj = Seq(sequence)
+    return str(seqObj.transcribe())
+
+# Function to calculate nucleotide composition
+def nucleotideComposition(sequence):
+    total = len(sequence)
+    return {
+        'A (%)': (sequence.count('A') / total) * 100,
+        'T (%)': (sequence.count('T') / total) * 100,
+        'G (%)': (sequence.count('G') / total) * 100,
+        'C (%)': (sequence.count('C') / total) * 100,
+    }
 
 def main():
     
