@@ -8,6 +8,10 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqUtils import gc_fraction
 from fpdf import FPDF
+import seaborn as sns
+
+
+
 
 
 def selectFile():
@@ -149,6 +153,15 @@ def plotGcVsLength(df, outputPath):
     plt.savefig(outputPath)
     plt.close()
 
+# Function to generate a Pair Plot for GC Content and Sequence Length
+def plotPairPlot(df, outputPath):
+    plt.figure(figsize=(10, 8))
+    sns.pairplot(df[['GC Content (%)', 'Length']])
+    plt.title('Pair Plot of GC Content and Length', fontsize=12)
+    plt.tight_layout()
+    plt.savefig(outputPath)
+    plt.close()
+
 def main():
     
     selectedFile = selectFile()
@@ -178,11 +191,13 @@ def main():
     gcPlot = os.path.join(outputFolder, "gc_content_distribution.png")
     lengthPlot = os.path.join(outputFolder, "sequence_length_distribution.png")
     scatterPlot = os.path.join(outputFolder, "gc_vs_length.png")
+    pairPlot = os.path.join(outputFolder, "pair_plot_gc_length.png")
 
     # Generate and save plots
     plotGcContentDistribution(df, gcPlot)
     plotSequenceLengthDistribution(df, lengthPlot)
     plotGcVsLength(df, scatterPlot)
+    plotPairPlot(df, pairPlot)
 
 # Example usage
 # saveAnalysisPlots(df)
