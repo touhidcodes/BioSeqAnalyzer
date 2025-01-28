@@ -1,5 +1,6 @@
 # BioSeqAnalyzer: Biological Sequence Analysis and Visualization with Python
 
+# import all Modules and Libraries
 import os
 import numpy as np
 import pandas as pd
