@@ -4,21 +4,16 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqUtils import gc_fraction
 from fpdf import FPDF
-import seaborn as sns
 
-
-
-
-
+# Function to select FASTA files in the current directory
 def selectFile():
-    # Get all FASTA files in the current directory
     fastaFiles = [file for file in os.listdir() if file.endswith(".fasta")]
 
-    # Check if no FASTA files are found
     if not fastaFiles:
         print("No FASTA files found in the current directory.")
         return
@@ -28,7 +23,6 @@ def selectFile():
     for index, fileName in enumerate(fastaFiles, 1):
         print(f"{index}. {fileName}")
     
-      # Prompt user to select a file by number
     userChoice = input("\nEnter the number of the FASTA file you want to use: ")
 
     # Validate user input
@@ -92,7 +86,6 @@ def analyzeSequences(sequences):
             'Reverse Complement (first 50)': reverseComplement(sequence)[:50],
             'RNA Transcription (first 50)': transcribeToRNA(sequence)[:50]
         })
-
     return pd.DataFrame(results)
 
 # Function to calculate basic statistics using numpy
@@ -113,9 +106,7 @@ def calculateBioStats(df):
         'GC Content': calculateStats(gcContent),
         'Lengths': calculateStats(lengths)
     }
-    
     return stats
-
 
 # Function to plot GC content distribution using Matplotlib
 def plotGcContentDistribution(df, outputPath):
@@ -163,16 +154,15 @@ def plotPairPlot(df, outputPath):
     plt.close()
 
 # Function to generate a PDF report with plots
-def generatePDFReport(df,  stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder):
+def generatePDFReport(stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
     # Title of the PDF
     pdf.set_font('Arial', 'B', 16)
-    pdf.cell(200, 10, txt="Biological Sequence Analysis Report", ln=True, align='C')
-
-    pdf.ln(10)  # Add some space
+    pdf.cell(200, 10, txt=f"{outputFolder} Sequence Analysis Report", ln=True, align='C')
+    pdf.ln(10) 
 
     # Add Summary Stats to the PDF
     pdf.set_font('Arial', '', 12)
@@ -185,21 +175,18 @@ def generatePDFReport(df,  stats, gcPlot, lengthPlot, scatterPlot, pairPlot, out
                               f"Median: {stats['Lengths']['Median']:.2f}\n"
                               f"Variance: {stats['Lengths']['Variance']:.2f}\n"
                               f"Standard Deviation: {stats['Lengths']['Standard Deviation']:.2f}\n")
-    
-    # pdf.ln(10)
 
     # Add the images of plots to the PDF
     pdf.add_page()
     pdf.cell(200, 10, txt="--- Plots ---", ln=True)
-    # pdf.ln(10)
+    pdf.ln(10)
     pdf.image(gcPlot, x=10, y=None, w=180)
-    # pdf.ln(85)
+    pdf.ln(20)
     pdf.image(lengthPlot, x=10, y=None, w=180)
-    # pdf.ln(85)
+    pdf.ln(20)
     pdf.image(scatterPlot, x=10, y=None, w=180)
-    # pdf.ln(85)
+    pdf.ln(20)
     pdf.image(pairPlot, x=10, y=None, w=180)
-
 
     # Save the PDF to a file
     pdfOutputPath = os.path.join(outputFolder, "analysis_report.pdf")
@@ -207,9 +194,9 @@ def generatePDFReport(df,  stats, gcPlot, lengthPlot, scatterPlot, pairPlot, out
 
     print(f"Analysis report generated and saved at: {pdfOutputPath}")
 
-
 def main():
     
+    #  Select FASTA file
     selectedFile = selectFile()
     
     # Load sequences from the FASTA file
@@ -217,19 +204,16 @@ def main():
     if not sequences:
         print("No sequences found in the FASTA file.")
         return
-
-    # print(sequences)
     
     # Analyze sequences and store the results in a DataFrame
     df = analyzeSequences(sequences)
 
     # Calculate summary statistics
     stats = calculateBioStats(df)
-    # print(stats)
 
-# Plot and save graphs to AnalysisResult folder
-    outputFolder = 'AnalysisResult'
-    os.makedirs(outputFolder, exist_ok=True)  
+    # Plot and save graphs to AnalysisResult folder
+    outputFolder = os.path.splitext(selectedFile)[0]
+    os.makedirs(outputFolder, exist_ok=True)
 
     # Set file paths for each plot
     gcPlot = os.path.join(outputFolder, "gc_content_distribution.png")
@@ -243,7 +227,7 @@ def main():
     plotGcVsLength(df, scatterPlot)
     plotPairPlot(df, pairPlot)
 
-    generatePDFReport(df, stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder)
+    generatePDFReport(stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder)
 
 # Run the program
 if __name__ == "__main__":
