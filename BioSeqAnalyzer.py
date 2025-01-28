@@ -162,6 +162,52 @@ def plotPairPlot(df, outputPath):
     plt.savefig(outputPath)
     plt.close()
 
+# Function to generate a PDF report with plots
+def generatePDFReport(df,  stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder):
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    # Title of the PDF
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(200, 10, txt="Biological Sequence Analysis Report", ln=True, align='C')
+
+    pdf.ln(10)  # Add some space
+
+    # Add Summary Stats to the PDF
+    pdf.set_font('Arial', '', 12)
+    pdf.multi_cell(0, 10, txt=
+                              f"GC Content Stats:\nMean: {stats['GC Content']['Mean']:.2f}\n"
+                              f"Median: {stats['GC Content']['Median']:.2f}\n"
+                              f"Variance: {stats['GC Content']['Variance']:.2f}\n"
+                              f"Standard Deviation: {stats['GC Content']['Standard Deviation']:.2f}\n\n"
+                              f"Sequence Length Stats:\nMean: {stats['Lengths']['Mean']:.2f}\n"
+                              f"Median: {stats['Lengths']['Median']:.2f}\n"
+                              f"Variance: {stats['Lengths']['Variance']:.2f}\n"
+                              f"Standard Deviation: {stats['Lengths']['Standard Deviation']:.2f}\n")
+    
+    # pdf.ln(10)
+
+    # Add the images of plots to the PDF
+    pdf.add_page()
+    pdf.cell(200, 10, txt="--- Plots ---", ln=True)
+    # pdf.ln(10)
+    pdf.image(gcPlot, x=10, y=None, w=180)
+    # pdf.ln(85)
+    pdf.image(lengthPlot, x=10, y=None, w=180)
+    # pdf.ln(85)
+    pdf.image(scatterPlot, x=10, y=None, w=180)
+    # pdf.ln(85)
+    pdf.image(pairPlot, x=10, y=None, w=180)
+
+
+    # Save the PDF to a file
+    pdfOutputPath = os.path.join(outputFolder, "analysis_report.pdf")
+    pdf.output(pdfOutputPath)
+
+    print(f"Analysis report generated and saved at: {pdfOutputPath}")
+
+
 def main():
     
     selectedFile = selectFile()
@@ -179,13 +225,11 @@ def main():
 
     # Calculate summary statistics
     stats = calculateBioStats(df)
-    print(stats)
-
-
+    # print(stats)
 
 # Plot and save graphs to AnalysisResult folder
     outputFolder = 'AnalysisResult'
-    os.makedirs(outputFolder, exist_ok=True)  # Create folder if it doesn't exist
+    os.makedirs(outputFolder, exist_ok=True)  
 
     # Set file paths for each plot
     gcPlot = os.path.join(outputFolder, "gc_content_distribution.png")
@@ -199,8 +243,8 @@ def main():
     plotGcVsLength(df, scatterPlot)
     plotPairPlot(df, pairPlot)
 
-# Example usage
-# saveAnalysisPlots(df)
+    generatePDFReport(df, stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFolder)
 
-    
-main()
+# Run the program
+if __name__ == "__main__":
+    main()
