@@ -28,7 +28,7 @@ def selectFile():
     # Validate user input
     if userChoice.isdigit():
         fileIndex = int(userChoice) - 1
-        if 0 <= fileIndex and fileIndex < len(userChoice):
+        if 0 <= fileIndex and fileIndex < len(fastaFiles):
             selectedFile = fastaFiles[fileIndex]
             print(f"\nYou selected: {selectedFile}")
             return selectedFile
