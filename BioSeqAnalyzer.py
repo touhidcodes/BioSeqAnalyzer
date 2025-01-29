@@ -111,7 +111,7 @@ def calculateBioStats(df):
 
 # Function to plot GC content distribution using Matplotlib
 def plotGcContentDistribution(df, outputPath):
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(8, 6))
     plt.hist(df['GC Content (%)'], bins=15, color='skyblue', edgecolor='black', alpha=0.7)
     plt.title('GC Content Distribution', fontsize=16)
     plt.xlabel('GC Content (%)', fontsize=14)
@@ -123,7 +123,7 @@ def plotGcContentDistribution(df, outputPath):
 
 # Function to plot sequence length distribution using Matplotlib
 def plotSequenceLengthDistribution(df, outputPath):
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(8, 6))
     plt.hist(df['Length'], bins=15, color='lightgreen', edgecolor='black', alpha=0.7)
     plt.title('Sequence Length Distribution', fontsize=16)
     plt.xlabel('Length (bp)', fontsize=14)
@@ -135,7 +135,7 @@ def plotSequenceLengthDistribution(df, outputPath):
 
 # Function to generate a scatter plot for GC content vs. sequence length
 def plotGcVsLength(df, outputPath):
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(8, 6))
     plt.scatter(df['Length'], df['GC Content (%)'], c='purple', alpha=0.7, edgecolors='black', s=100)
     plt.title('GC Content vs. Sequence Length', fontsize=16)
     plt.xlabel('Length (bp)', fontsize=14)
@@ -147,7 +147,7 @@ def plotGcVsLength(df, outputPath):
 
 # Function to generate a Pair Plot for GC Content and Sequence Length
 def plotPairPlot(df, outputPath):
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(8, 6))
     sns.pairplot(df[['GC Content (%)', 'Length']])
     plt.title('Pair Plot of GC Content and Length', fontsize=12)
     plt.tight_layout()
@@ -179,15 +179,15 @@ def generatePDFReport(stats, gcPlot, lengthPlot, scatterPlot, pairPlot, outputFo
 
     # Add the images of plots to the PDF
     pdf.add_page()
-    pdf.cell(200, 10, txt="--- Plots ---", ln=True)
+    pdf.cell(200, 10, txt="--- Analysis Plots ---", ln=True)
+    pdf.ln(5)
+    pdf.image(gcPlot, x=10, y=None, w=150)
     pdf.ln(10)
-    pdf.image(gcPlot, x=10, y=None, w=180)
-    pdf.ln(20)
-    pdf.image(lengthPlot, x=10, y=None, w=180)
-    pdf.ln(20)
-    pdf.image(scatterPlot, x=10, y=None, w=180)
-    pdf.ln(20)
-    pdf.image(pairPlot, x=10, y=None, w=180)
+    pdf.image(lengthPlot, x=10, y=None, w=150)
+    pdf.ln(10)
+    pdf.image(scatterPlot, x=10, y=None, w=150)
+    pdf.ln(10)
+    pdf.image(pairPlot, x=10, y=None, w=120)
 
     # Save the PDF to a file
     pdfOutputPath = os.path.join(outputFolder, "analysis_report.pdf")
